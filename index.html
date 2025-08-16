@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مولد كلمات المرور الذكي</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #667eea 50%, #764ba2 75%, #f093fb 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            color: white;
+            padding: 10px;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .title {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #ffd700, #ffed4e, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 20px rgba(255, 215, 0, 0.5);
+            position: relative;
+        }
+
+        .title::before {
+            content: '🔐';
+            position: absolute;
+            left: -80px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 4rem;
+            animation: pulse 2s infinite;
+        }
+
+        
+
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .main-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ffd700, #ffed4e, #4CAF50, #2196F3, #ffd700);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite;
+        }
+
+        
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .setting-group {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .setting-group:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .setting-title {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: #ffd700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .slider-container {
+            margin-bottom: 2rem;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            outline: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .checkbox-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 4px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .checkbox.checked {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            border-color: #4CAF50;
+        }
+
+        .checkbox.checked::after {
+            content: '✓';
+            position: absolute;
+            top: -2px;
+            left: 4px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .generate-section {
+            text-align: center;
+            margin: 3rem 0;
+        }
+
+        .generate-btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049, #66BB6A);
+            color: white;
+            border: none;
+            padding: 1.5rem 3rem;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(76, 175, 80, 0.6);
+        }
+
+        .generate-btn:active {
+            transform: translateY(0);
+        }
+
+        .result-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .password-display {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            word-break: break-all;
+            font-family: 'Courier New', monospace;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            position: relative;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .password-display.generated {
+            border-color: #4CAF50;
+            box-shadow: 0 0 25px rgba(76, 175, 80, 0.3);
+            animation: glow 0.5s ease-in-out;
+        }
+
+        
+
+        .password-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .strength-meter {
+            margin: 2rem 0;
+        }
+
+        .strength-bar {
+            width: 100%;
+            height: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .strength-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: all 0.5s ease;
+            position: relative;
+        }
+
+        .strength-weak { background: linear-gradient(90deg, #f44336, #d32f2f); }
+        .strength-medium { background: linear-gradient(90deg, #ff9800, #f57c00); }
+        .strength-strong { background: linear-gradient(90deg, #4CAF50, #45a049); }
+        .strength-excellent { background: linear-gradient(90deg, #4CAF50, #66BB6A, #81C784); }
+
+        .strength-text {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .tips-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .tip-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 15px;
+            padding: 2rem;
+            border-right: 4px solid #ffd700;
+            transition: all 0.3s ease;
+        }
+
+        .tip-card:hover {
+            transform: translateX(-10px);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+        }
+
+        .tip-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tip-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.8rem;
+            color: #ffd700;
+        }
+
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 215, 0, 0.6);
+            border-radius: 50%;
+            animation: float 8s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .title::before {
+                left: -50px;
+                font-size: 2.5rem;
+            }
+            
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-card {
+                padding: 2rem;
+            }
+            
+            .password-display {
+                font-size: 1.2rem;
+            }
+            
+            .password-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-particles" id="particles"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="title">مولد كلمات المرور الذكي</h1>
+            <p class="subtitle">اصنع كلمات مرور قوية وآمنة لحماية حساباتك بأحدث التقنيات!</p>
+        </div>
+
+        <div class="main-card">
+            <div class="settings-grid">
+                <div class="setting-group">
+                    <h3 class="setting-title">⚙️ إعدادات كلمة المرور</h3>
+                    
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>طول كلمة المرور</span>
+                            <span id="lengthValue">12</span>
+                        </div>
+                        <input type="range" class="slider" id="lengthSlider" min="6" max="50" value="12">
+                    </div>
+
+                    <div class="checkbox-group">
+                        <div class="checkbox-item" onclick="toggleCheckbox('uppercase')">
+                            <div class="checkbox checked" id="uppercase"></div>
+                            <span>أحرف كبيرة (A-Z)</span>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox('lowercase')">
+                            <div class="checkbox checked" id="lowercase"></div>
+                            <span>أحرف صغيرة (a-z)</span>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox('numbers')">
+                            <div class="checkbox checked" id="numbers"></div>
+                            <span>أرقام (0-9)</span>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox('symbols')">
+                            <div class="checkbox checked" id="symbols"></div>
+                            <span>رموز خاصة (!@#$%)</span>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox('arabic')">
+                            <div class="checkbox" id="arabic"></div>
+                            <span>أحرف عربية (أ-ي)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <h3 class="setting-title">🎯 خيارات متقدمة</h3>
+                    
+                    <div class="checkbox-group">
+                        <div class="checkbox-item" onclick="toggleCheckbox('excludeSimilar')">
+                            <div class="checkbox checked" id="excludeSimilar"></div>
+                            <span>تجنب الأحرف المتشابهة (O,0,l,1)</span>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox('noRepeating')">
+                            <div class="checkbox" id="noRepeating"></div>
+                            <span>عدم تكرار الأحرف</span>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox('memorable')">
+                            <div class="checkbox" id="memorable"></div>
+                            <span>كلمة مرور سهلة الحفظ</span>
+                        </div>
+                        
+                        <div class="checkbox-item" onclick="toggleCheckbox('phoneKeyboard')">
+                            <div class="checkbox" id="phoneKeyboard"></div>
+                            <span>متوافقة مع لوحة مفاتيح الهاتف</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="generate-section">
+                <button class="generate-btn" onclick="generatePassword()">
+                    🚀 إنشاء كلمة مرور جديدة
+                </button>
+            </div>
+        </div>
+
+        <div class="result-section" id="resultSection" style="display: none;">
+            <h3 style="text-align: center; margin-bottom: 2rem; color: #ffd700;">🎉 كلمة المرور الخاصة بك</h3>
+            
+            <div class="password-display" id="passwordDisplay">
+                اضغط على "إنشاء كلمة مرور جديدة" للبدء
+            </div>
+
+            <div class="password-actions">
+                <button class="action-btn" onclick="copyPassword()">
+                    📋 نسخ كلمة المرور
+                </button>
+                <button class="action-btn" onclick="downloadPassword()">
+                    💾 حفظ كملف
+                </button>
+                <button class="action-btn" onclick="generatePassword()">
+                    🔄 إنشاء جديدة
+                </button>
+                <button class="action-btn" onclick="showQR()">
+                    📱 رمز QR
+                </button>
+            </div>
+
+            <div class="strength-meter">
+                <div class="strength-bar">
+                    <div class="strength-fill" id="strengthFill"></div>
+                </div>
+                <div class="strength-text" id="strengthText">قوة كلمة المرور: ---</div>
+            </div>
+        </div>
+
+        <div class="tips-section">
+            <div class="tip-card">
+                <div class="tip-icon">🔒</div>
+                <div class="tip-title">نصيحة الأمان الأولى</div>
+                <p>لا تستخدم نفس كلمة المرور لأكثر من حساب واحد. كل حساب يحتاج كلمة مرور مختلفة!</p>
+            </div>
+            
+            <div class="tip-card">
+                <div class="tip-icon">📱</div>
+                <div class="tip-title">استخدم مدير كلمات المرور</div>
+                <p>تطبيقات مثل LastPass أو 1Password تساعدك في حفظ وإدارة كلمات المرور بأمان عالي</p>
+            </div>
+            
+            <div class="tip-card">
+                <div class="tip-icon">🔐</div>
+                <div class="tip-title">المصادقة الثنائية</div>
+                <p>فعّل المصادقة الثنائية (2FA) في حساباتك المهمة لحماية إضافية حتى لو سُرقت كلمة المرور</p>
+            </div>
+            
+            <div class="tip-card">
+                <div class="tip-icon">⏰</div>
+                <div class="tip-title">غيّر كلمات المرور دورياً</div>
+                <p>غيّر كلمات مرور حساباتك المهمة كل 3-6 أشهر، خاصة الحسابات المصرفية والإيميل</p>
+            </div>
+
+            <div class="tip-card">
+                <div class="tip-icon">👀</div>
+                <div class="tip-title">احذر من أعين المتطفلين</div>
+                <p>لا تكتب كلمة المرور أمام الآخرين ولا تحفظها في مكان مكشوف كالمفكرة أو الهاتف</p>
+            </div>
+
+            <div class="tip-card">
+                <div class="tip-icon">🌐</div>
+                <div class="tip-title">تحقق من أمان الموقع</div>
+                <p>تأكد أن الموقع يبدأ بـ HTTPS (القفل الأخضر) قبل إدخال كلمة المرور</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let settings = {
+            length: 12,
+            uppercase: true,
+            lowercase: true,
+            numbers: true,
+            symbols: true,
+            arabic: false,
+            excludeSimilar: true,
+            noRepeating: false,
+            memorable: false,
+            phoneKeyboard: false
+        };
+
+        let currentPassword = '';
+
+        // Initialize
+        document.getElementById('lengthSlider').addEventListener('input', (e) => {
+            settings.length = parseInt(e.target.value);
+            document.getElementById('lengthValue').textContent = settings.length;
+        });
+
+        function toggleCheckbox(setting) {
+            settings[setting] = !settings[setting];
+            const checkbox = document.getElementById(setting);
+            
+            if (settings[setting]) {
+                checkbox.classList.add('checked');
+            } else {
+                checkbox.classList.remove('checked');
+            }
+
+            // Ensure at least one character type is selected
+            if (!settings.uppercase && !settings.lowercase && !settings.numbers && !settings.symbols && !settings.arabic) {
+                settings[setting] = true;
+                checkbox.classList.add('checked');
+                showNotification('يجب اختيار نوع واحد على الأقل من الأحرف!', 'warning');
+            }
+        }
+
+        function generatePassword() {
+            if (settings.memorable) {
+                currentPassword = generateMemorablePassword();
+            } else {
+                currentPassword = generateRandomPassword();
+            }
+
+            const display = document.getElementById('passwordDisplay');
+            const resultSection = document.getElementById('resultSection');
+
+            display.textContent = currentPassword;
+            display.classList.add('generated');
+            resultSection.style.display = 'block';
+
+            setTimeout(() => {
+                display.classList.remove('generated');
+            }, 500);
+
+            checkPasswordStrength(currentPassword);
+            createParticleExplosion();
+            showNotification('تم إنشاء كلمة مرور جديدة! 🎉', 'success');
+
+            // Smooth scroll to result
+            resultSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function generateRandomPassword() {
+            let chars = '';
+            
+            if (settings.uppercase) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            if (settings.lowercase) chars += 'abcdefghijklmnopqrstuvwxyz';
+            if (settings.numbers) chars += '0123456789';
+            if (settings.symbols) chars += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+            if (settings.arabic) chars += 'أبتثجحخدذرزسشصضطظعغفقكلمنهوي';
+
+            if (settings.excludeSimilar) {
+                chars = chars.replace(/[0O1lI]/g, '');
+            }
+
+            if (settings.phoneKeyboard) {
+                // Keep only characters easily accessible on mobile keyboards
+                chars = chars.replace(/[{}|\\`~]/g, '');
+            }
+
+            let password = '';
+            const charsArray = chars.split('');
+
+            for (let i = 0; i < settings.length; i++) {
+                let randomChar;
+                do {
+                    randomChar = charsArray[Math.floor(Math.random() * charsArray.length)];
+                } while (settings.noRepeating && password.includes(randomChar));
+                
+                password += randomChar;
+            }
+
+            return password;
+        }
+
+        function generateMemorablePassword() {
+            const words = [
+                'شمس', 'قمر', 'نجم', 'بحر', 'جبل', 'وردة', 'حديقة', 'كتاب', 'مفتاح', 'باب',
+                'Apple', 'Moon', 'Star', 'Ocean', 'Mountain', 'Garden', 'Book', 'Key', 'Door', 'Light'
+            ];
+            
+            const symbols = ['@', '#', '$', '!', '*'];
+            const numbers = Math.floor(Math.random() * 9999) + 1000;
+            
+            const word1 = words[Math.floor(Math.random() * words.length)];
+            const word2 = words[Math.floor(Math.random() * words.length)];
+            const symbol = symbols[Math.floor(Math.random() * symbols.length)];
+            
+            return `${word1}${symbol}${numbers}${symbol}${word2}`;
+        }
+
+        function checkPasswordStrength(password) {
+            let score = 0;
+            let feedback = [];
+
+            // Length
+            if (password.length >= 12) score += 25;
+            else if (password.length >= 8) score += 15;
+            else feedback.push('كلمة المرور قصيرة جداً');
+
+            // Character variety
+            if (/[a-z]/.test(password)) score += 15;
+            if (/[A-Z]/.test(password)) score += 15;
+            if (/[0-9]/.test(password)) score += 15;
+            if (/[^A-Za-z0-9]/.test(password)) score += 20;
+            if (/[أ-ي]/.test(password)) score += 10;
+
+            // Complexity patterns
+            if (!/(.)\1{2,}/.test(password)) score += 10; // No repeating chars
+            
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+
+            let strengthLevel, strengthColor, strengthMessage;
+
+            if (score >= 85) {
+                strengthLevel = 'excellent';
+                strengthColor = 'strength-excellent';
+                strengthMessage = 'ممتازة جداً! 🛡️';
+            } else if (score >= 65) {
+                strengthLevel = 'strong';
+                strengthColor = 'strength-strong';
+                strengthMessage = 'قوية جداً! 💪';
+            } else if (score >= 45) {
+                strengthLevel = 'medium';
+                strengthColor = 'strength-medium';
+                strengthMessage = 'متوسطة ⚠️';
+            } else {
+                strengthLevel = 'weak';
+                strengthColor = 'strength-weak';
+                strengthMessage = 'ضعيفة! ⛔';
+            }
+
+            strengthFill.className = `strength-fill ${strengthColor}`;
+            strengthFill.style.width = Math.min(score, 100) + '%';
+            strengthText.textContent = `قوة كلمة المرور: ${strengthMessage} (${score}/100)`;
+        }
+
+        function copyPassword() {
+            if (!currentPassword) {
+                showNotification('لا توجد كلمة مرور للنسخ!', 'warning');
+                return;
+            }
+
+            navigator.clipboard.writeText(currentPassword).then(() => {
+                showNotification('تم نسخ كلمة المرور! 📋', 'success');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = currentPassword;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification('تم نسخ كلمة المرور! 📋', 'success');
+            });
+        }
+
+        function downloadPassword() {
+            if (!currentPassword) {
+                showNotification('لا توجد كلمة مرور للحفظ!', 'warning');
+                return;
+            }
+
+            const content = `كلمة المرور الخاصة بك: ${currentPassword}\nتاريخ الإنشاء: ${new Date().toLocaleString('ar-SA')}\n\nملاحظة: احتفظ بهذا الملف في مكان آمن ولا تشاركه مع أحد!`;
+            
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `password_${Date.now()}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            
+            showNotification('تم حفظ كلمة المرور! 💾', 'success');
+        }
+
+        function showQR() {
+            if (!currentPassword) {
+                showNotification('لا توجد كلمة مرور لإنشاء رمز QR!', 'warning');
+                return;
+            }
+
+            // Create QR code using a simple QR API
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(currentPassword)}`;
+            
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+                backdrop-filter: blur(10px);
+            `;
+
+            modal.innerHTML = `
+                <div style="background: white; padding: 2rem; border-radius: 20px; text-align: center; color: black;">
+                    <h3 style="margin-bottom: 1rem; color: #1e3c72;">رمز QR لكلمة المرور</h3>
+                    <img src="${qrUrl}" alt="QR Code" style="border-radius: 10px; margin-bottom: 1rem;">
+                    <p style="margin-bottom: 1rem; font-size: 0.9rem; color: #666;">امسح هذا الرمز بكاميرا هاتفك</p>
+                    <button onclick="this.parentElement.parentElement.remove()" 
+                            style="background: #f44336; color: white; border: none; padding: 0.8rem 2rem; border-radius: 25px; cursor: pointer; font-weight: bold;">
+                        إغلاق
+                    </button>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+            showNotification('تم إنشاء رمز QR! 📱', 'success');
+        }
+
+        function createParticleExplosion() {
+            const particlesContainer = document.getElementById('particles');
+            
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 2 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 5) + 's';
+                
+                // Random colors
+                const colors = ['#ffd700', '#4CAF50', '#2196F3', '#ff9800', '#e91e63'];
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                
+                particlesContainer.appendChild(particle);
+                
+                // Remove after animation
+                setTimeout(() => {
+                    if (particle.parentNode) {
+                        particle.remove();
+                    }
+                }, 8000);
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#4CAF50' : type === 'warning' ? '#ff9800' : '#2196F3'};
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 25px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                z-index: 1000;
+                font-weight: bold;
+                font-size: 1rem;
+                animation: slideIn 0.3s ease, slideOut 0.3s ease 2.7s;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255,255,255,0.2);
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 3000);
+        }
+
+        // Add CSS animations for notifications
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Create initial floating particles
+        function createInitialParticles() {
+            const particlesContainer = document.getElementById('particles');
+            
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 6) + 's';
+                
+                particlesContainer.appendChild(particle);
+                
+                // Recreate particle after it finishes
+                setTimeout(() => {
+                    if (particle.parentNode) {
+                        particle.remove();
+                        // Create a new one
+                        setTimeout(() => createInitialParticles(), Math.random() * 2000);
+                    }
+                }, (Math.random() * 4 + 6) * 1000);
+            }
+        }
+
+        // Initialize particles
+        createInitialParticles();
+
+        // Auto-generate password on page load
+        setTimeout(() => {
+            generatePassword();
+            showNotification('مرحباً! تم إنشاء كلمة مرور تجريبية لك 🔐', 'info');
+        }, 1000);
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'g':
+                    case 'G':
+                        e.preventDefault();
+                        generatePassword();
+                        break;
+                    case 'c':
+                    case 'C':
+                        if (currentPassword) {
+                            e.preventDefault();
+                            copyPassword();
+                        }
+                        break;
+                }
+            }
+        });
+
+        // Add keyboard shortcut hints
+        const shortcutsHint = document.createElement('div');
+        shortcutsHint.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        `;
+        shortcutsHint.innerHTML = `
+            <strong>⌨️ اختصارات لوحة المفاتيح:</strong><br>
+            Ctrl+G: إنشاء كلمة مرور جديدة<br>
+            Ctrl+C: نسخ كلمة المرور
+        `;
+        document.body.appendChild(shortcutsHint);
+
+        // Hide shortcuts hint after 5 seconds
+        setTimeout(() => {
+            if (shortcutsHint.parentNode) {
+                shortcutsHint.style.animation = 'slideOut 0.5s ease';
+                setTimeout(() => shortcutsHint.remove(), 500);
+            }
+        }, 5000);
+    </script>
+</body>
+</html>
